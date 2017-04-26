@@ -1,13 +1,13 @@
 import * as request from 'request';
 
-const IPLocationServiceEndpoint = (ip: string) => `http://ip-api.com/json/${ip}`;
-
 export interface Location {
   isp: string;
   country: string;
   regionName: string;
   city: string;
 }
+
+const IPLocationServiceEndpoint = (ip: string) => `http://ip-api.com/json/${ip}`;
 
 export function getLocationByIPAddress(ip: string) {
   const endpoint = IPLocationServiceEndpoint(ip);

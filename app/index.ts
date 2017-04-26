@@ -21,7 +21,7 @@ const ratelimit = Ratelimit({
     total: 'Rate-Limit-Total'
   },
   // Each user cannot send too many requests
-  max: 20
+  max: 10
 });
 
 app.use(ratelimit);
@@ -32,7 +32,7 @@ app.listen(port);
 Logger.info(`listening on port ${port}`);
 
 // Spawn several workers
-const workerPath = path.join(__dirname, 'worker/bootstrap.js');
+const workerPath = path.join(__dirname, '../worker.js');
 const worker = childProcess.fork(workerPath);
 
 worker.on('exit', code => {

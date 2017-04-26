@@ -6,7 +6,7 @@
   "author": "ele828 <dongjiemusic@qq.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon -e js,ts bootstrap.js"
+    "dev": "nodemon -e js,ts www.js"
   },
   "dependencies": {
     "@types/koa": "^2.0.39",

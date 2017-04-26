@@ -6,6 +6,7 @@ import { extractHostFromURL, resolveFullMetricName } from '../Utils';
 import retriveWebsite from '../service/WebsiteService';
 import { getLocationByIPAddress } from '../service/LocationService';
 import Visitor from '../model/Visitor';
+import { saveVisitorMetric } from '../service/VisitorMetricService';
 
 const queue = Kue.createQueue();
 queue.process('performance_log', 20, async (job, done) => {
@@ -32,18 +33,18 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
   const hostname = extractHostFromURL(referer);
 
   if (!referer) {
-    Logger.error('Lack of referer');
+    Logger.error('Rejected: Can not found referer');
     return;
   }
   if (!token) {
-    Logger.error('Should have token string in URL');
+    Logger.error('Rejected: Can not found token');
     return;
   }
 
   // Should accept queries
   const keys = Object.keys(queries);
   if (!keys || keys.length <= 0) {
-    Logger.error('Lack of query items');
+    Logger.error('Rejected: Can not found queries');
     return;
   }
 
@@ -75,21 +76,15 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
   }
 
   // Register environment infomation
-  if (queries['os']) {
-    environment.OS = queries['os'];
-  }
-  if (queries['br']) {
-    environment.browser = queries['br'];
-  }
-  if (queries['bv']) {
-    environment.browerVersion = queries['bv'];
-  }
-  if (queries['dc']) {
-    environment.device = queries['dc'];
-  }
-  if (queries['dv']) {
-    environment.deviceVersion = queries['dv'];
-  }
+  if (queries['os']) environment.OS = queries['os'];
+  if (queries['br']) environment.browser = queries['br'];
+  if (queries['bv']) environment.browerVersion = queries['bv'];
+  if (queries['dc']) environment.device = queries['dc'];
+  if (queries['dv']) environment.deviceVersion = queries['dv'];
 
   Logger.info('=> Visitor created:', visitor);
+
+  // Save into database
+  await saveVisitorMetric(token, referer, visitor);
+  Logger.info('Saved');
 }
