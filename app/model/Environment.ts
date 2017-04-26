@@ -6,5 +6,9 @@ export default class Environment {
   deviceVersion: string;
   IPAddress: string;
   // Network Provider Company
-  network: string;
+  networkISP: string;
+  country: string;
+  // Province or State
+  regionName: string;
+  city: string;
 }
