@@ -1,21 +1,28 @@
 import * as Kue from 'kue';
+import Logger from '../Logger';
 import Metric from '../model/Metric';
 import Environment from '../model/Environment';
 import { extractHostFromURL, resolveFullMetricName } from '../Utils';
 import retriveWebsite from '../service/WebsiteService';
 import { getLocationByIPAddress } from '../service/LocationService';
+import Visitor from '../model/Visitor';
 
 const queue = Kue.createQueue();
 queue.process('performance_log', 20, async (job, done) => {
-  await consume(job.data.request, job.data.queries);
+  try {
+    await consume(job.data.request, job.data.queries);
+  } catch (error) {
+    // Process was rejected
+  }
   done();
 });
 
 async function consume(request: { ip: string, headers: any }, queries: any) {
-  console.log('=> Performance Worker Received:', queries);
-  console.log('=> IP:', request.ip);
+  Logger.info('=> Performance Worker Received:', queries);
+  Logger.info('=> IP:', request.ip);
 
   if (!request || ! queries) {
+    Logger.error('Reject invalid work task');
     return;
   }
 
@@ -25,18 +32,18 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
   const hostname = extractHostFromURL(referer);
 
   if (!referer) {
-    console.log('Lack of referer');
+    Logger.error('Lack of referer');
     return;
   }
   if (!token) {
-    console.log('Should have token string in URL');
+    Logger.error('Should have token string in URL');
     return;
   }
 
   // Should accept queries
   const keys = Object.keys(queries);
   if (!keys || keys.length <= 0) {
-    console.log('Lack of query items');
+    Logger.error('Lack of query items');
     return;
   }
 
@@ -44,12 +51,22 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
   await retriveWebsite(hostname, token);
 
   // Get network and locations
-  const location = await getLocationByIPAddress(ipAddress);
-  console.log(location.city);
-
-  // Abstract performance infomation
   const metric = new Metric();
   const environment = new Environment();
+  const visitor = new Visitor();
+
+  const location = await getLocationByIPAddress(ipAddress);
+
+  // Contruct a visitor
+  visitor.city = location.city;
+  visitor.regionName = location.regionName;
+  visitor.country = location.country;
+  visitor.IPAddress = ipAddress;
+  visitor.networkISP = location.isp;
+  visitor.environment = environment;
+  visitor.performanceMetric = metric;
+
+  // Abstract performance infomation
   for (const key of keys) {
     const property = resolveFullMetricName(key);
     if (property) {
@@ -74,6 +91,5 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
     environment.deviceVersion = queries['dv'];
   }
 
-  console.log('=> After processed:', metric);
-  console.log('=> Environment Info:', environment);
+  Logger.info('=> Visitor created:', visitor);
 }

@@ -3,7 +3,7 @@ import * as request from 'request';
 const IPLocationServiceEndpoint = (ip: string) => `http://ip-api.com/json/${ip}`;
 
 export interface Location {
-  networkISP: string;
+  isp: string;
   country: string;
   regionName: string;
   city: string;

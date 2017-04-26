@@ -15,6 +15,7 @@
     "@types/mysql": "^0.0.32",
     "@types/node": "^7.0.13",
     "@types/request": "^0.0.42",
+    "@types/winston": "^2.3.1",
     "ioredis": "^2.5.0",
     "koa": "^2.2.0",
     "koa-ratelimit": "^4.0.0",
@@ -23,6 +24,7 @@
     "mysql": "^2.13.0",
     "request": "^2.81.0",
     "ts-node": "^3.0.2",
-    "typescript": "^2.2.2"
+    "typescript": "^2.2.2",
+    "winston": "^2.3.1"
   }
 }
