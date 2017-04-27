@@ -33,18 +33,18 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
   const hostname = extractHostFromURL(referer);
 
   if (!referer) {
-    Logger.error('Rejected: Can not found referer');
+    Logger.error('Rejected: Can not find referer');
     return;
   }
   if (!token) {
-    Logger.error('Rejected: Can not found token');
+    Logger.error('Rejected: Can not find token');
     return;
   }
 
   // Should accept queries
   const keys = Object.keys(queries);
   if (!keys || keys.length <= 0) {
-    Logger.error('Rejected: Can not found queries');
+    Logger.error('Rejected: Can not find queries');
     return;
   }
 
