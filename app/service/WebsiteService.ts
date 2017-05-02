@@ -8,7 +8,7 @@ export default function retriveWebsite(hostname: string, token: string) {
       (error, results) => {
         if (error) return reject(error);
         if (!results || results.length !== 1) {
-          return reject();
+          return reject('Could not find specific website');
         }
         resolve(results[0]);
     });

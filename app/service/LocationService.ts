@@ -1,4 +1,4 @@
-import * as request from 'request';
+// import * as request from 'request';
 
 export interface Location {
   isp: string;
@@ -7,17 +7,31 @@ export interface Location {
   city: string;
 }
 
-const IPLocationServiceEndpoint = (ip: string) => `http://ip-api.com/json/${ip}`;
+// const IPLocationServiceEndpoint = (ip: string) => `http://ip-api.com/json/${ip}`;
 
 export function getLocationByIPAddress(ip: string) {
-  const endpoint = IPLocationServiceEndpoint(ip);
+  // const endpoint = IPLocationServiceEndpoint(ip);
   return new Promise<Location>((resolve, reject) => {
-    request(endpoint, (error, response, body) => {
-      if (error) return reject(error);
-      const retval = JSON.parse(body);
-      if (response.statusCode === 200 || retval.status === 'success') {
-        resolve(retval);
-      } else reject();
+    // request(endpoint, (error, response, body) => {
+    //   if (error) return reject(error);
+    //   const retval = JSON.parse(body);
+    //   if (response.statusCode === 200 || retval.status === 'success') {
+    //     resolve(retval);
+    //   } else reject();
+    // });
+    if (!ip) reject(ip);
+    /**
+     * visitor.city = location.city;
+  visitor.regionName = location.regionName;
+  visitor.country = location.country;
+  visitor.IPAddress = ipAddress;
+  visitor.networkISP = location.isp;
+     */
+    resolve({
+      city: 'Shenyang',
+      regionName: 'Liaoning',
+      country: 'China',
+      isp: 'China Education Network'
     });
   });
 }

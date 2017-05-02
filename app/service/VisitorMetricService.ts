@@ -26,12 +26,14 @@ export function saveVisitorMetric(token: string, url: string, visitor: Visitor) 
     first_byte_time: visitor.performanceMetric.firstByteTime,
     images_time: visitor.performanceMetric.imagesTime,
     styles_time: visitor.performanceMetric.stylesTime,
-    scripts_time: visitor.performanceMetric.scriptsTime
+    scripts_time: visitor.performanceMetric.scriptsTime,
+    time: new Date()
   };
   return new Promise((resolve, reject) => {
-    connection.query('INSERT INTO `metric` SET ?', metric, (error, results) => {
+    const query = connection.query('INSERT INTO `metric` SET ?', metric, (error, results) => {
       if (error) return reject(error);
       resolve(results);
     });
+    console.log(query.sql);
   });
 }

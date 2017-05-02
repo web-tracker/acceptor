@@ -13,7 +13,7 @@ queue.process('performance_log', 20, async (job, done) => {
   try {
     await consume(job.data.request, job.data.queries);
   } catch (error) {
-    // Process was rejected
+    Logger.error('Error occurs:', error);
   }
   done();
 });
