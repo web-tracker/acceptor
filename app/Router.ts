@@ -4,6 +4,6 @@ import ErrorHandler from './handler/ErrorHandler';
 
 const router = new Router();
 router.get('/perf.gif', PerfermanceHandler);
-router.get('/log.gif', ErrorHandler);
+router.get('/error.gif', ErrorHandler);
 
 export default router;

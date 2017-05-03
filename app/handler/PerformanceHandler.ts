@@ -12,7 +12,7 @@ const success = (ctx: Context) => {
 };
 
 const fail = (ctx: Context) => {
-  ctx.status = 404;
+  ctx.status = 200;
   ctx.type = 'image/gif';
 };
 

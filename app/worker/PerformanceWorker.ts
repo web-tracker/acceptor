@@ -84,7 +84,10 @@ async function consume(request: { ip: string, headers: any }, queries: any) {
 
   Logger.info('=> Visitor created:', visitor);
 
+  // Get reporting time from client
+  const timems = Object.keys(queries).filter(q => !isNaN(q as any))[0];
+
   // Save into database
-  await saveVisitorMetric(token, referer, visitor);
+  await saveVisitorMetric(token, referer, visitor, new Date(parseInt(timems)));
   Logger.info('Saved');
 }

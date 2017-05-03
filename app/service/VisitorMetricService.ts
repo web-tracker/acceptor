@@ -1,7 +1,7 @@
 import Visitor from '../model/Visitor';
 import connection from '../Database';
 
-export function saveVisitorMetric(token: string, url: string, visitor: Visitor) {
+export function saveVisitorMetric(token: string, url: string, visitor: Visitor, time: Date) {
   // Build insert statements
   const metric = {
     site_token: token,
@@ -27,7 +27,7 @@ export function saveVisitorMetric(token: string, url: string, visitor: Visitor) 
     images_time: visitor.performanceMetric.imagesTime,
     styles_time: visitor.performanceMetric.stylesTime,
     scripts_time: visitor.performanceMetric.scriptsTime,
-    time: new Date()
+    time: time
   };
   return new Promise((resolve, reject) => {
     const query = connection.query('INSERT INTO `metric` SET ?', metric, (error, results) => {
