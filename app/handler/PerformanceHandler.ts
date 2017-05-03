@@ -26,7 +26,7 @@ export default async function PerformanceHandler(ctx: Context) {
   queue.create('performance_log', {
     request: {
       ip: ctx.request.ip,
-      headers: ctx.request.headers,
+      headers: ctx.request.headers
     },
     queries: queries
   }).save();

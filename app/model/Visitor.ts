@@ -1,4 +1,5 @@
 import Environment from './Environment';
+import Error from './Error';
 import Metric from './Metric';
 
 export default class Visitor {
@@ -10,5 +11,7 @@ export default class Visitor {
   networkISP: string;
   IPAddress: string;
   environment: Environment;
-  performanceMetric: Metric;
+  performanceMetric?: Metric;
+  errorLogs: Error[];
+  time: Date;
 }

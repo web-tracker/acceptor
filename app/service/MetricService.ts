@@ -1,13 +1,16 @@
 import Visitor from '../model/Visitor';
 import connection from '../Database';
 
-export function saveVisitorMetric(token: string, url: string, visitor: Visitor, time: Date) {
+export function saveVisitorMetric(token: string, url: string, visitor: Visitor) {
+  if (!visitor.performanceMetric) {
+    throw new Error('No metric data is provided to savevisitorMetric()');
+  }
   // Build insert statements
   const metric = {
     site_token: token,
     page_url: url,
     country: visitor.country,
-    region_name: visitor.regionName,
+    region: visitor.regionName,
     city: visitor.city,
     network_isp: visitor.networkISP,
     ip_address: visitor.IPAddress,
@@ -27,13 +30,12 @@ export function saveVisitorMetric(token: string, url: string, visitor: Visitor, 
     images_time: visitor.performanceMetric.imagesTime,
     styles_time: visitor.performanceMetric.stylesTime,
     scripts_time: visitor.performanceMetric.scriptsTime,
-    time: time
+    time: visitor.time
   };
   return new Promise((resolve, reject) => {
-    const query = connection.query('INSERT INTO `metric` SET ?', metric, (error, results) => {
+    connection.query('INSERT INTO `metric` SET ?', metric, (error, results) => {
       if (error) return reject(error);
       resolve(results);
     });
-    console.log(query.sql);
   });
 }

@@ -1,32 +1,29 @@
 import * as Kue from 'kue';
 import Logger from '../Logger';
-import Metric from '../model/Metric';
-import Environment from '../model/Environment';
-import { extractHostFromURL, resolveFullMetricName } from '../Utils';
+import Error from '../model/Error';
 import retriveWebsite from '../service/WebsiteService';
-import { getLocationByIPAddress } from '../service/LocationService';
+import { extractHostFromURL } from '../Utils';
+import Environment from '../model/Environment';
 import Visitor from '../model/Visitor';
-import { saveVisitorMetric } from '../service/MetricService';
+import { getLocationByIPAddress } from '../service/LocationService';
+import { saveErrorLogs } from '../service/ErrorService';
 
 const queue = Kue.createQueue();
-queue.process('performance_log', 20, async (job, done) => {
+queue.process('error_log', 20, async (job, done) => {
   try {
-    await consume(job.data.request, job.data.queries);
+    await consume(job.data.request, job.data.query, job.data.errors);
   } catch (error) {
-    Logger.error('Performance Worker Error:', error);
+    Logger.error('ErrorWorker Error:', error);
   }
   done();
 });
 
-async function consume(request: { ip: string, headers: any }, query: any) {
-  Logger.info('=> Performance Worker Received:', query);
-  Logger.info('=> IP:', request.ip);
-
-  if (!request || ! query) {
-    Logger.error('Reject invalid work task');
+async function consume(request: { ip: string, headers: any }, query: any, errors: Error[]) {
+  Logger.info('Error Worker:', query);
+  if (!request || !query || !errors || errors.length <= 0) {
+    Logger.error('Rejected: invalid task');
     return;
   }
-
   const token = query.token;
   const ipAddress = '210.30.193.70' || request.ip;
   const referer = request.headers.referer;
@@ -41,18 +38,9 @@ async function consume(request: { ip: string, headers: any }, query: any) {
     return;
   }
 
-  // Should accept queries
-  const keys = Object.keys(query);
-  if (!keys || keys.length <= 0) {
-    Logger.error('Rejected: Can not find queries');
-    return;
-  }
-
   // Search specified website to check if it exists
   await retriveWebsite(hostname, token);
 
-  // Get network and locations
-  const metric = new Metric();
   const environment = new Environment();
   const visitor = new Visitor();
 
@@ -65,15 +53,7 @@ async function consume(request: { ip: string, headers: any }, query: any) {
   visitor.IPAddress = ipAddress;
   visitor.networkISP = location.isp;
   visitor.environment = environment;
-  visitor.performanceMetric = metric;
-
-  // Abstract performance infomation
-  for (const key of keys) {
-    const property = resolveFullMetricName(key);
-    if (property) {
-      metric[property] = query[key];
-    }
-  }
+  visitor.errorLogs = errors;
 
   // Register environment infomation
   if (query['os']) environment.OS = query['os'];
@@ -89,6 +69,6 @@ async function consume(request: { ip: string, headers: any }, query: any) {
   visitor.time = new Date(parseInt(timems));
 
   // Save into database
-  await saveVisitorMetric(token, referer, visitor);
-  Logger.info('Performance Metric Saved');
+  await saveErrorLogs(token, referer, visitor);
+  Logger.info('ErrorLogs Saved');
 }

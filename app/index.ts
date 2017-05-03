@@ -32,8 +32,8 @@ app.listen(port);
 Logger.info(`listening on port ${port}`);
 
 // Spawn several workers
-const workerPath = path.join(__dirname, '../worker.js');
-const worker = childProcess.fork(workerPath);
+const perfWorkerPath = path.join(__dirname, '../worker.js');
+const worker = childProcess.fork(perfWorkerPath);
 
 worker.on('exit', code => {
   Logger.info('Worker process exit', code);
