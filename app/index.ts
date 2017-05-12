@@ -6,7 +6,7 @@ import * as Ratelimit from 'koa-ratelimit';
 import * as childProcess from 'child_process';
 import router from './Router';
 
-const port = 3000;
+const port = 3030;
 const app = new Koa();
 const redis = new Redis();
 
@@ -21,7 +21,7 @@ const ratelimit = Ratelimit({
     total: 'Rate-Limit-Total'
   },
   // Each user cannot send too many requests
-  max: 10
+  max: 20
 });
 
 app.use(ratelimit);
