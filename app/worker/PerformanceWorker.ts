@@ -22,15 +22,15 @@ async function consume(request: { ip: string, headers: any }, query: any) {
   Logger.info('=> Performance Worker Received:', query);
   Logger.info('=> IP:', request.ip);
 
-  if (!request || ! query) {
+  if (!request || !query) {
     Logger.error('Reject invalid work task');
     return;
   }
 
   const token = query.token;
-  const ipAddress = '210.30.193.70' || request.ip;
+  const ipAddress = request.ip;
   const referer = request.headers.referer;
-  const hostname = extractHostFromURL(referer);
+  const hostname = extractHostFromURL(referer) as string;
 
   if (!referer) {
     Logger.error('Rejected: Can not find referer');

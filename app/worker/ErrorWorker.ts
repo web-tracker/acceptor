@@ -25,9 +25,9 @@ async function consume(request: { ip: string, headers: any }, query: any, errors
     return;
   }
   const token = query.token;
-  const ipAddress = '210.30.193.70' || request.ip;
+  const ipAddress = request.ip;
   const referer = request.headers.referer;
-  const hostname = extractHostFromURL(referer);
+  const hostname = extractHostFromURL(referer) as string;
 
   if (!referer) {
     Logger.error('Rejected: Can not find referer');
