@@ -1,11 +1,10 @@
-const regex = /:\/\/([^\d\:]*)[\:\d]*\//im;
+import * as URL from 'url';
 
 /**
  * @param {string} url
  */
 export function extractHostFromURL(url: string) {
-  const retval = regex.exec(url);
-  return !retval ? '' : retval[1];
+  return URL.parse(url).hostname;
 }
 
 const metricMapper = {
