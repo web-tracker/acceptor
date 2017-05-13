@@ -13,5 +13,5 @@ export default class Visitor {
   environment: Environment;
   performanceMetric?: Metric;
   errorLogs: Error[];
-  time: Date;
+  time: number;
 }
